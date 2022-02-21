@@ -1,0 +1,59 @@
+
+findDupa <- function(cna, gene){
+
+  # Finding duplicates in entrez id 
+  
+  #gives rows for which there are no NA as entrez id
+  nona.ent <- which(!is.na(cna$Entrez_Gene_Id))
+
+  #the entrez ids of the above rows
+  nona.entid <- cna$Entrez_Gene_Id[nona.ent]
+  nona.entid[1:5]
+
+  #checks if the entred ids have duplicates or not (TRUE/FALSE)
+  d.ent <- duplicated(nona.entid)
+
+  #find which rows have duplicates (gives only the first one not the appearances)
+  dups.rows <- which(d.ent == TRUE)
+
+  #pick the first duplicated row and find the entrez id
+  entz.ids <- nona.entid[dups.rows]
+
+  #find the rows where this particular entrez id is duplicated
+  dups.row.cna <- which(cna$Entrez_Gene_Id == entz.ids)
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  #gives rows for which there are no NA as entrez id
+  nona.ent <- which(!is.na(gene$Entrez_Gene_Id))
+
+  #the entrez ids of the above rows
+  nona.entid <- gene$Entrez_Gene_Id[nona.ent]
+  nona.entid[1:5]
+
+  #checks if the entred ids have duplicates or not (TRUE/FALSE)
+  d.ent <- duplicated(nona.entid)
+
+  #find which rows have duplicates (gives only the first one not the appearances)
+  dups.rows <- which(d.ent == TRUE)
+
+  #pick the first duplicated row and find the entrez id
+  entz.ids <- nona.entid[dups.rows]
+
+  #find the rows where this particular entrez id is duplicated
+  dups.row.gene <- which(cna$Entrez_Gene_Id == entz.ids)
+  
+  
+  
+  
+  
+  
+  return(dups.row.cna, dups.row.gene)
+}
