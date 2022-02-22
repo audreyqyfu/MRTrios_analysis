@@ -1,5 +1,5 @@
 
-findDupa <- function(cna, gene){
+findDups <- function(cna, gene){
 
   # Finding duplicates in entrez id 
   
@@ -20,9 +20,10 @@ findDupa <- function(cna, gene){
   entz.ids <- nona.entid[dups.rows]
 
   #find the rows where this particular entrez id is duplicated
-  dups.row.cna <- which(cna$Entrez_Gene_Id == entz.ids)
-  
-  
+  for(i in 1:length(entz.ids){
+  dups <- which(cna$Entrez_Gene_Id == entz.ids[i])
+  dups.row.cna <- c(dups.row.cna, dups)
+  }
   
   
   
@@ -48,8 +49,10 @@ findDupa <- function(cna, gene){
   entz.ids <- nona.entid[dups.rows]
 
   #find the rows where this particular entrez id is duplicated
-  dups.row.gene <- which(cna$Entrez_Gene_Id == entz.ids)
-  
+  for(i in 1:length(entz.ids){
+  dups <- which(gene$Entrez_Gene_Id == entz.ids[i])
+  dups.row.gene <- c(dups.row.gene, dups)
+  }
   
   
   
