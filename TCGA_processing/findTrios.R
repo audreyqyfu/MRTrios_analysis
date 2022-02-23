@@ -14,7 +14,7 @@
 # output
 # trios.rows: data matrix of 4 columns: gene name, row number
 #             from each input dataset
-function <- findTrios (methyl.data, expn.data, cna.data, entrez.list) {
+#function <- findTrios (methyl.data, expn.data, cna.data, entrez.list) {
     # identify a list of unique genes
     # for methylation probes
     
@@ -33,7 +33,7 @@ function <- findTrios (methyl.data, expn.data, cna.data, entrez.list) {
     # return a data matrix for matched trios
     # in each row: gene name, row numbers from each dataset
 
-}
+#}
 
 
 
@@ -89,7 +89,7 @@ entrez.cna <- function(cna.row){
   
   #use the cna row but take the column of the gene row
   #column 4 has gene rows in tmp and column 3 has cna rows in tmp
-  entrez.row.cna <- which(cna$Entrez_Gene_Id) == gene$Entrez_Gene_Id[as.integer(tmp[cna.row,4])])
+  entrez.row.cna <- which(cna$Entrez_Gene_Id == gene$Entrez_Gene_Id[as.integer(tmp[cna.row,4])])
   entrez.row.cna
   
   #check if the matched row is NA or not
