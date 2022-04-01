@@ -1,8 +1,8 @@
 
-findDups <- function(cna, gene){
+findDupsCNA <- function(cna){
 
-  # Finding duplicates in entrez id 
-  
+  # Finding duplicates in entrez id
+
   #gives rows for which there are no NA as entrez id
   nona.ent <- which(!is.na(cna$Entrez_Gene_Id))
 
@@ -19,19 +19,26 @@ findDups <- function(cna, gene){
   #pick the first duplicated row and find the entrez id
   entz.ids <- nona.entid[dups.rows]
 
+  #initialize variable for duplicated rows in CNA data
+  dups.row.cna <- NULL
+
   #find the rows where this particular entrez id is duplicated
-  for(i in 1:length(entz.ids){
+  for(i in 1:length(entz.ids)){
+
+  #since there are multiple entrez ids, we loop through each one of them
   dups <- which(cna$Entrez_Gene_Id == entz.ids[i])
+
+  #save all the row numbers
   dups.row.cna <- c(dups.row.cna, dups)
   }
-  
-  
-  
-  
-  
-  
-  
-  
+
+  #return the result
+  return(dups.row.cna)
+}
+
+
+findDupsGENE <- function(gene){
+
   #gives rows for which there are no NA as entrez id
   nona.ent <- which(!is.na(gene$Entrez_Gene_Id))
 
@@ -48,15 +55,19 @@ findDups <- function(cna, gene){
   #pick the first duplicated row and find the entrez id
   entz.ids <- nona.entid[dups.rows]
 
+  #initialize variable for duplicated rows in
+  dups.row.gene <- NULL
+
   #find the rows where this particular entrez id is duplicated
-  for(i in 1:length(entz.ids){
+  for(i in 1:length(entz.ids)){
+
+  #since there are multiple entrez ids, we loop through each one of them
   dups <- which(gene$Entrez_Gene_Id == entz.ids[i])
+
+  #save all the row numbers
   dups.row.gene <- c(dups.row.gene, dups)
   }
-  
-  
-  
-  
-  
-  return(dups.row.cna, dups.row.gene)
+
+   #return the result
+   return(dups.row.gene)
 }
