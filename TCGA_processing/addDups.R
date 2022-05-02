@@ -75,13 +75,13 @@ for(i in 1:length(genes.na.row)){
   }
 }
 
-return(final) 
+return(list(final,dup.final)) 
 
 }
 
 
 
-gene.add.dups <- functions(final, org.Hs.egALIAS2EG){
+gene.add.dups <- functions(final, dup.final, org.Hs.egALIAS2EG){
 
   #which rows have NA in the gene exp column in trio file
   na.row.gene <- which(is.na(final[,4]) == TRUE)
