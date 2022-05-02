@@ -49,8 +49,11 @@ write.table(final, file = "/mnt/ceph/kark6289/TCGA_analysis/trios/final.copy.txt
 #find the duplicates for genes with multiple entrez ids in CNA data
 final.tmp <- cna.add.dups(final, org.Hs.eg.db)
 
+final <- final.tmp[[1]]
+dup.final <- final.tmp[[1]]
+
 #find the duplicates for genes with multiple entrez ids in Gene Exp data
-final.res <- gene..add.dups(final.tmp, org.Hs.eg.db)
+final.res <- gene..add.dups(final, dup.final, org.Hs.eg.db)
 
 #save the data to txt file
 write.table(final.res, file = "/mnt/ceph/kark6289/TCGA_analysis/trios/Trios.final.txt", sep = "\t", row.names = FALSE,
