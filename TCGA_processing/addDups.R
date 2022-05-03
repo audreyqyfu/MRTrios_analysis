@@ -1,4 +1,4 @@
-cna.add.dups <- functions(final, org.Hs.egALIAS2EG){
+cna.add.dups <- function(final, org.Hs.egALIAS2EG){
 
   #which rows have NA in the cna column in trio file
 na.row.cna <- which(is.na(final[,3]) == TRUE)
@@ -81,12 +81,14 @@ return(list(final,dup.final))
 
 
 
-gene.add.dups <- functions(final, dup.final, org.Hs.egALIAS2EG){
+gene.add.dups <- function(final, dup.final, org.Hs.egALIAS2EG){
 
   #which rows have NA in the gene exp column in trio file
   na.row.gene <- which(is.na(final[,4]) == TRUE)
 
-
+  #load the r package
+  xx <- as.list(org.Hs.egALIAS2EG)
+  
   #find the unique genes that have NA in gene exp column
   genes.na.row <- unique(unlist(final[na.row.gene,1]))
 
