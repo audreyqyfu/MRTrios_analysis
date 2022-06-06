@@ -1,6 +1,6 @@
 ####################################################
 
-           THIS ONLY HAS CODE FOR METHYLATION POSITIVE ER FOR NOW
+           THIS ONLY HAS CODE FOR METHYLATION NEGATIVE ER FOR NOW
            
 ##########################################################
 
