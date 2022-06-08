@@ -1,13 +1,13 @@
 ######################################################
-
-       ONLY FOR POSITIVE ER TEST
-
+#
+#       ONLY FOR POSITIVE ER TEST
+#
 #########################################################
 
 #load the library
 library(data.table)
-library(splitstackshape)
-library(MRGN, lib = "/mnt/ceph/kark6289/Rlibs")
+library(splitstackshape, lib = "/mnt/ceph/audreyf/Rpackages/")
+library(MRGN, lib = "/mnt/ceph/audreyf/Rpackages/")
 
 #read in the datasets
 gene.exp <- as.data.frame(fread("/mnt/ceph/fu_lab/TCGA/cbioportal/brca_tcga/data_RNA_Seq_v2_mRNA_median_all_sample_Zscores.txt"))
@@ -30,6 +30,8 @@ dim(TCGA.meth)
 #returns the rows that do not have a sum of NAs that match with the number of columns
 #so basically removes the rows that have all NAs for methylation levels
 
+# gene and meth have the same sets of individuals as gene.exp and TCGA.meth
+
 gene <- gene.exp[rowSums(is.na(gene.exp[,3:(ncol(gene.exp)-1)])) != ncol(gene.exp[,3:(ncol(gene.exp)-1)]), ]
 dim(gene)
 gene[1:5,1:5]
@@ -48,9 +50,6 @@ dim(pos.ind)
 #finding common individuals among the 3 datasets
 match1 = intersect(colnames(gene)[3:ncol(gene)], colnames(meth)[5:ncol(meth)]) #length 787
 com.ind = intersect(colnames(cna)[3:ncol(cna)], match1) #length 777
-
-#reading in the Trios data
-trios <- data.frame(fread("/mnt/ceph/kark6289/test_trio/trios/Trios.final2.txt"))
 
 #finding common individuals between the 3 datasets and pos & neg ER individuals
 com.ind.pos <- intersect(unlist(pos.ind[,2]), com.ind)
@@ -88,47 +87,66 @@ com.ind.neg <- intersect(unlist(neg.ind[,2]), com.ind)
   meth.sig.asso.pcs <- readRDS("/mnt/ceph/kark6289/TCGA_analysis/PCs/logit_data_PCs/meth.posER.sig.asso.pcs.RData")
   
   #matching individuals between common positive individuals and respective datasets
-  ind.col.meth = match(com.ind.pos, colnames(meth))
-  ind.col.gene = match(com.ind.pos, colnames(gene))
+  #find indices of com.ind.pos in each original dataset
+  #ind.col.meth = match(com.ind.pos, colnames(meth))
+  #ind.col.gene = match(com.ind.pos, colnames(gene))
+ind.col.meth = match(com.ind.pos, colnames(TCGA.meth))
+ind.col.gene = match(com.ind.pos, colnames(gene.exp))
   ind.col.cna = match(com.ind.pos, colnames(cna))
   
   #match individuals
-  com.ind.trio.pc.gene <- match(colnames(gene.exp[,ind.col.gene]), pc.gene[,1])
-  com.ind.trio.pc.meth <- match(colnames(TCGA.meth[,ind.col.meth]), pc.meth[,1])
-  
-  for(i in 1:nrow(trios){
+  #find indices of com.ind.pos in each PC matrix
+  #com.ind.trio.pc.gene <- match(colnames(gene.exp[,ind.col.gene]), pc.gene[,1])
+  #com.ind.trio.pc.meth <- match(colnames(TCGA.meth[,ind.col.meth]), pc.meth[,1])
+com.ind.trio.pc.gene <- match(com.ind.pos, pc.gene[,1])
+com.ind.trio.pc.meth <- match(com.ind.pos, pc.meth[,1])
+
+#reading in the Trios data
+trios <- data.frame(fread("/mnt/ceph/kark6289/test_trio/trios/Trios.final2.txt"))
+
+# output filename
+output.file <- "./model.trio.MRGN.txt"
+
+#write column names to output file
+names <- c('trio', 'b11', 'b21', 'b12', 'b22', 'V1:T2', 'V1:T1', 'pb11', 'pb21', 'pb12', 'pb22', 'pV1:T2', 'pV1:T1', 'Minor.freq', 'model')
+write.table(t(names), file = output.file, sep = "\t", row.names = FALSE, col.names = FALSE, append = FALSE, quote=FALSE)
+
+for(i in 1:nrow(trios)){
     
-    #create the trio
-    trio.cna = t(cna[trios[i,3],ind.col.cna])
-    trio.gene = t(gene.exp[trios[i,4],ind.col.gene])
-    trio.meth = t(TCGA.meth[trios[i,2],ind.col.meth])
+    cat (i)
     
-    trio.mat = cbind(trio.cna, trio.gene, trio.meth)
-    
-    #finding the gene row after removal of NAs
-    gene.row.nona <- which(gene$index == gene.exp$index[as.numeric(colnames(trio.mat)[2])])
-    meth.row.nona <- which(meth$index == TCGA.meth$index[as.numeric(colnames(trio.mat)[3])])
-    
-    gene.row.novar <- col.mtx.gene[gene.row.nona,2]
-                 
-    #find common pcs between gene exp and meth
-    #com.sig.asso.pcs <- union(unlist(gene.sig.asso.pcs[gene.row.nona,]), unlist(meth.sig.asso.pcs[meth.row.nona,]))
-    
-    #get the sig pcs from the pc score matrix
-    sig.pc.gene <- pc.gene[com.ind.trio.pc.gene,(unlist(gene.sig.asso.pcs[gene.row.novar,])+1)]
-    sig.pc.meth <- pc.meth[com.ind.trio.pc.meth,(unlist(meth.sig.asso.pcs[meth.row.nona,])+1)]
-    
-    #create matrix
-    final.mat <- cbind(trio.mat, sig.pc.gene, sig.pc.meth)
-    
-    #infer the trio
-    res = infer.trio(as.data.frame(final.mat), use.perm = FALSE)
-    which.model=class.vec(res)
-    print(which.model)
-    
-    #write to a file
-    write.table(which.model, file = "/mnt/ceph/kark6289/TCGA_analysis/MRGN_InferTrio/model.trio.MRGN.txt", sep = "\t", row.names = FALSE,
-                col.names = FALSE, append = TRUE, quote=FALSE)
-    
-  }
-  
+    if (sum (is.na (trios[i,])) == 0) {
+        
+        #create the trio
+        trio.cna = t(cna[trios[i,3],ind.col.cna])
+        trio.gene = t(gene.exp[trios[i,4],ind.col.gene])
+        trio.meth = t(TCGA.meth[trios[i,2],ind.col.meth])
+        
+        trio.mat = cbind(trio.cna, trio.gene, trio.meth)
+        
+        #finding the gene row after removal of NAs
+        gene.row.nona <- which(gene$index == gene.exp$index[as.numeric(colnames(trio.mat)[2])])
+        meth.row.nona <- which(meth$index == TCGA.meth$index[as.numeric(colnames(trio.mat)[3])])
+        
+        gene.row.novar <- col.mtx.gene[gene.row.nona,2]
+                     
+        #find common pcs between gene exp and meth
+        #com.sig.asso.pcs <- union(unlist(gene.sig.asso.pcs[gene.row.nona,]), unlist(meth.sig.asso.pcs[meth.row.nona,]))
+        
+        #get the sig pcs from the pc score matrix
+        sig.pc.gene <- pc.gene[com.ind.trio.pc.gene,(unlist(gene.sig.asso.pcs[gene.row.novar,])+1)]
+        sig.pc.meth <- pc.meth[com.ind.trio.pc.meth,(unlist(meth.sig.asso.pcs[meth.row.nona,])+1)]
+        
+        #create matrix
+        final.mat <- cbind(trio.mat, sig.pc.gene, sig.pc.meth)
+        
+        #infer the trio
+        res = infer.trio(as.data.frame(final.mat), use.perm = FALSE)
+        which.model=class.vec(res)
+        #print(which.model)
+        
+        #write to a file
+        write.table(t(c(i, res, which.model)), file = output.file, sep = "\t", row.names = FALSE, col.names = FALSE, append = TRUE, quote=FALSE)
+        
+        }
+    }
