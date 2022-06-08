@@ -122,13 +122,13 @@ com.ind.neg <- intersect(unlist(neg.ind[,2]), com.ind)
     final.mat <- cbind(trio.mat, sig.pc.gene, sig.pc.meth)
     
     #infer the trio
-    res = infer.trio(as.data.frame(final.mat), gamma = 0)
+    res = infer.trio(as.data.frame(final.mat), use.perm = FALSE)
     which.model=class.vec(res)
     print(which.model)
     
     #write to a file
     write.table(which.model, file = "/mnt/ceph/kark6289/TCGA_analysis/MRGN_InferTrio/model.trio.MRGN.txt", sep = "\t", row.names = FALSE,
-                col.names = NA, append = TRUE, quote=FALSE)
+                col.names = FALSE, append = TRUE, quote=FALSE)
     
   }
   
