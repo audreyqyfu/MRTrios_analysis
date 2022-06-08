@@ -116,7 +116,7 @@ com.ind.neg <- intersect(unlist(neg.ind[,2]), com.ind)
     final.mat <- cbind(trio.mat, sig.pc.gene, sig.pc.meth)
     
     #infer the trio
-    res = infer.trio(as.data.frame(final.mat), gamma = 1)
+    res = infer.trio(as.data.frame(final.mat), gamma = 0)
     which.model=class.vec(res)
     print(which.model)
     
