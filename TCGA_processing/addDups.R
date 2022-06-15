@@ -108,7 +108,7 @@ for(i in 1:length(genes.na.row)){
   if(length(entz.id.new) == 1){
 
     #find the row number for that entrez id in cna data
-    new.row <- which(cna$Entrez_Gene_Id == entz.id.new)
+    new.row <- which(gene$Entrez_Gene_Id == entz.id.new)
     new.row
 
    #check if length is greater than 1
@@ -119,7 +119,7 @@ for(i in 1:length(genes.na.row)){
     for(j in 1:length(entz.id.new)){
 
       #find the match for each entz id
-      row <- which(cna$Entrez_Gene_Id == entz.id.new[j])
+      row <- which(gene$Entrez_Gene_Id == entz.id.new[j])
 
       #save every row to new.row
       new.row <- c(new.row, row)
