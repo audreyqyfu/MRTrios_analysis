@@ -1,4 +1,6 @@
 cna.add.dups <- function(final, cna){
+ 
+  new.row <- NULL
 
   #rows with duplicates in CNA data
 dup.CNA <- findDupsCNA(cna)
@@ -94,6 +96,8 @@ return(list(final,dup.final))
 
 
 gene.add.dups <- function(final, dup.final, gene){
+
+  new.row <- NULL
 
   #rows with duplicates in Gene Exp data
 dup.GENE <- findDupsGENE(gene)
