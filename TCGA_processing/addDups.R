@@ -1,6 +1,9 @@
 cna.add.dups <- function(final, cna){
 
-  #which rows have NA in the cna column in trio file
+  #rows with duplicates in CNA data
+dup.CNA <- findDupsCNA(cna)
+  
+ #which rows have NA in the cna column in trio file
 na.row.cna <- which(is.na(final[,3]) == TRUE)
 
 #load the r package
@@ -41,6 +44,17 @@ for(i in 1:length(genes.na.row)){
       }
     }
 
+      for(i in 1:length(new.row)){
+        
+      save.row <- NULL
+      
+        if((new.row[i] %in% dup.CNA) == FALSE){
+          save.row = c(save.row,new.row[i])
+        }
+      }
+    
+    new.row <- save.row
+      
  #check if length greater than 0
     if(length(new.row) == 1){
       print(i)
@@ -81,6 +95,9 @@ return(list(final,dup.final))
 
 gene.add.dups <- function(final, dup.final, gene){
 
+  #rows with duplicates in Gene Exp data
+dup.GENE <- findDupsGENE(gene)
+  
   #which rows have NA in the gene exp column in trio file
   na.row.gene <- which(is.na(final[,4]) == TRUE)
 
@@ -127,6 +144,17 @@ for(i in 1:length(genes.na.row)){
     }
   }
 
+    for(i in 1:length(new.row)){
+        
+      save.row <- NULL
+      
+        if((new.row[i] %in% dup.GENE) == FALSE){
+          save.row = c(save.row,new.row[i])
+        }
+      }
+    
+    new.row <- save.row
+      
   #check if length greater than 0
   if(length(new.row) == 1){
 
