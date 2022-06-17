@@ -136,7 +136,7 @@ for(i in 1:length(genes.na.row)){
   }else if(length(entz.id.new) > 1){
     new.row = NULL
 
-    #loop through the entz id to find the match in cna data
+    #loop through the entz id to find the match in gene exp data
     for(j in 1:length(entz.id.new)){
 
       #find the match for each entz id
@@ -163,9 +163,9 @@ for(i in 1:length(genes.na.row)){
   if(length(new.row) == 1){
 
 
-    #find which rows have the gene in cna data
+    #find which rows have the gene in gene.exp data
     final.gene.row <- which(final[,1] == as.character(genes.na.row[i]))
-    final[final.gene.row,3] <- new.row
+    final[final.gene.row,4] <- new.row
 
   }
 
