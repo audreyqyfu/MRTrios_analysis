@@ -46,6 +46,8 @@ for(i in 1:length(genes.na.row)){
       }
     }
 
+     if(length(new.row) > 0){
+      
       for(i in 1:length(new.row)){
         
       save.row <- NULL
@@ -56,7 +58,8 @@ for(i in 1:length(genes.na.row)){
       }
     
     new.row <- save.row
-      
+   }
+     
  #check if length greater than 0
     if(length(new.row) == 1){
       print(i)
@@ -149,6 +152,7 @@ for(i in 1:length(genes.na.row)){
   }
  
    if(length(new.row) > 0){
+    
     for(i in 1:length(new.row)){
         
       save.row <- NULL
