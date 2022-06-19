@@ -48,10 +48,10 @@ for(i in 1:length(genes.na.row)){
 
      if(length(new.row) > 0){
       
-      for(i in 1:length(new.row)){
-        
       save.row <- NULL
       
+      for(i in 1:length(new.row)){
+        
         if((new.row[i] %in% dup.CNA) == FALSE){
           save.row = c(save.row,new.row[i])
         }
@@ -152,10 +152,10 @@ for(i in 1:length(genes.na.row)){
   }
  
    if(length(new.row) > 0){
-    
-    for(i in 1:length(new.row)){
-        
+      
       save.row <- NULL
+      
+    for(i in 1:length(new.row)){
       
         if((new.row[i] %in% dup.GENE) == FALSE){
           save.row = c(save.row,new.row[i])
