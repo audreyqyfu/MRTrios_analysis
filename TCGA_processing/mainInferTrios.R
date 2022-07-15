@@ -44,7 +44,7 @@ match1 = intersect(colnames(gene)[3:ncol(gene)], colnames(meth)[5:ncol(meth)]) #
 com.ind = intersect(colnames(cna)[3:ncol(cna)], match1) #length 777
 
 #reading in the Trios data
-trios <- data.frame(fread("/mnt/ceph/kark6289/test_trio/trios/Trios.final7.txt"))
+trios <- data.frame(fread("/mnt/ceph/kark6289/test_trio/trios/trio.final.protein.coding.txt"))
 
 #finding common individuals between the 3 datasets and pos & neg ER individuals
 com.ind.pos <- intersect(unlist(pos.ind[,2]), com.ind)
