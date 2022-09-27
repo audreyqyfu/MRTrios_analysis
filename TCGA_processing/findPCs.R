@@ -65,17 +65,15 @@ findPCs <- function(data, startCol, GeneNameCol, type.ind, com.ind, type){
   
   
   #get the significant associated pcs
-  data.with.conf = get.conf(new.data.no.var, pca.type$x, blocksize = 2000, method = "correlation", filter_int_child = TRUE)
-  
-  #combine each sig pcs into rows
-  sig.pcs.data <- as.data.frame(do.call(rbind, data.with.conf$sig.asso.pcs))
-  length(sig.pcs.data)
+  data.with.conf = get.conf.matrix(new.data.no.var, pca.type$x, blocksize = 2000, apply.qval = TRUE)
+
+ 
   
   #replace the column numbers to corresponding gene names
   colnames(new.data.no.var) <- data.info
   dim(new.data.no.var)
   
   #return the 4 datasets
-  return(list(pca.type$x, sig.pcs.data, col.mtx.data, new.data.no.var))
+  return(list(pca.type$x, data.with.conf, col.mtx.data, new.data.no.var))
   
 }
