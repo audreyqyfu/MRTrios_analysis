@@ -48,24 +48,50 @@ analyzeTrios <- function(TCGA.meth, gene.exp, cna, trios, pc.meth, pc.gene, meth
         com.ind.gene <- match(com.ind, rownames(pc.meth))
         
         #extract the column numbers for sig pcs
-        sig.pcs.cols.meth <- as.integer(unlist(meth.sig.asso.pcs[row.sig.pcs.meth,]))
-        sig.pcs.cols.gene <- as.integer(unlist(gene.sig.asso.pcs[row.sig.pcs.gene,]))
+        sig.pcs.cols.meth <- as.integer(unlist(meth.sig.asso.pcs[[1]][[row.sig.pcs.meth]]))
+        sig.pcs.cols.gene <- as.integer(unlist(gene.sig.asso.pcs[[1]][[row.sig.pcs.gene]]))
+        
+        #remvove PCs greater than 50
+        insig.meth <- which(sig.pcs.cols.meth > 50)
+        
+        if(length(insig.meth) > 0){
+          
+          sig.pcs.cols.meth <- sig.pcs.cols.meth[-insig.meth]
+          
+        }else{
+          
+          sig.pcs.cols.meth <- sig.pcs.cols.meth
+          
+        }
+        
+        
+        insig.gene <- which(sig.pcs.cols.gene > 50)
+        
+        if(length(insig.gene) > 0){
+          
+          sig.pcs.cols.gene <- sig.pcs.cols.gene[-insig.gene]
+          
+        }else{
+          
+          sig.pcs.cols.gene <- sig.pcs.cols.gene
+          
+        }
         
         #extract the sig columns from the pc matrix with the common individuals  
         sig.pc.gene <- pc.gene[com.ind.gene, sig.pcs.cols.gene]
         sig.pc.meth <- pc.meth[com.ind.meth, sig.pcs.cols.meth]
         
         #count the total number of sig pcs
-        total.pc.count <- length(unlist(gene.sig.asso.pcs[row.sig.pcs.gene,])) + length(unlist(meth.sig.asso.pcs[row.sig.pcs.meth,]))
+        total.pc.count <- length(unlist(gene.sig.asso.pcs[[1]][[row.sig.pcs.gene]])) + length(unlist(meth.sig.asso.pcs[[1]][[row.sig.pcs.meth]]))
         
         #create matrix with the trios and the confounding variables
         final.mat <- cbind(trio.mat, sig.pc.gene, sig.pc.meth, age, race)
         
         #apply MRGN and infer the trio
-        res = infer.trio(as.data.frame(final.mat), use.perm = FALSE)
+        res = infer.trio(as.data.frame(final.mat), use.perm = TRUE, is.CNA = TRUE, nperms = 500)
         
         #combine the row number of trios, model type, and pc count
-        final <- cbind(i, res$Inferred.Model, total.pc.count)
+        final <- cbind(i, res, total.pc.count)
         
         #combine the value for each trio in rows
         tmp <- rbind(tmp, final)
