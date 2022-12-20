@@ -1,3 +1,21 @@
+no.var <- function(data){
+  
+  #find columns with no variance
+  var.col <- apply(data, 2, var, na.rm = TRUE)
+  
+  #return index of cols with 0 variance
+  na.var1 <- which(var.col == 0)
+  
+  t <- apply(is.na(data), 2, sum)
+  
+  na.var2 <- which(t >= (nrow(data)-2))
+  
+  na.var <- c(na.var1, na.var2)
+  
+  return(na.var)
+  
+}
+
 no.var.gene <- function(gene.data){
   
   #find columns with no variance

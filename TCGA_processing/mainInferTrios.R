@@ -80,8 +80,8 @@ mrgn.InferTrio <- function(trios, gene.exp, TCGA.meth, gene, meth, pc.gene, pc.m
   gene.data <- new.gene.nona[ind.com.pc.trio.gene,]
   meth.data <- new.meth.nona[ind.com.pc.trio.meth,]
 
-  na.var.gene <- no.var.gene(gene.data)
-  na.var.meth <- no.var.gene(meth.data)
+  na.var.gene <- no.var(gene.data)
+  na.var.meth <- no.var(meth.data)
 
   if(length(na.var.gene)>0){
     
