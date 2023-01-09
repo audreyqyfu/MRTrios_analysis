@@ -7,10 +7,10 @@ dup.CNA <- findDupsCNA(cna.data)
 dup.GENE <- findDupsGENE(gene.data)
 
 #rows with NAs for all individual in Methylation data
-na.METH <- removeNA.meth(meth.data)
+na.METH <- removeNA(meth.data, nStartMeth)
 
 #rows with NAs for all individual in Gene Exp data
-na.GENE <- removeNA.gene(gene.data)
+na.GENE <- removeNA(gene.data, nStartGene)
 
 #since the data has multiple genes in one row separated by ";", we split them
 split.genes <- unlist(strsplit(as.character(meth.data$Gene_Symbol), ';'))
