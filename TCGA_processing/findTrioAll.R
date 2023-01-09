@@ -1,4 +1,4 @@
-findTrioAll <- function(meth.data, cna.data, gene.data) {
+findTrioAll <- function(meth.data, cna.data, gene.data, nStartMeth, nStartGene) {
 
 #rows with duplicates in CNA data
 dup.CNA <- findDupsCNA(cna.data)
