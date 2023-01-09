@@ -40,7 +40,7 @@ dim(meth)
 ################################### matching trios ##############
 
 #go to the findTrioAll function and run the code and get the trios dataset
-final <- findTrioAll(meth, cna, gene)
+final <- findTrioAll(meth, cna, gene, nStartMeth, nStartGene)
 print(final[1:5,])
 
 colnames(final) <- c("Gene name", "meth.row", "cna.row", "gene.row")
