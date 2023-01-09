@@ -1,4 +1,4 @@
-removeNA <- function(data){
+removeNA <- function(data, nStart){
 
    #find the rows that have NA as values for all the individuals in Methylation data
    na.cols.meth <- which(rowSums(is.na(TCGA.meth[,nStart:ncol(TCGA.meth)])) == ncol(TCGA.meth[,nStart:ncol(TCGA.meth)]))
