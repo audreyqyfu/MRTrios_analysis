@@ -107,3 +107,4 @@ entrez.gene <- function(gene.row, data, cna, gene){
   return(entrez.row.gene)
 
 }
+
