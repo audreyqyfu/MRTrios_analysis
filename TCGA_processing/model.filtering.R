@@ -19,7 +19,7 @@ for(i in 1:nrow(res)){
 
   print(i)
   
-#if classification is either M0, M1, or M2
+#if classification is either M0 or M2
 if(res$Inferred.Model[i] == "M0.1" | res$Inferred.Model[i] == "M0.2" | res$Inferred.Model[i] == "M2.1" | res$Inferred.Model[i] == "M2.2"){
   
   #we check the marginal p values and if they are less than 0.01, we re classify as "Other"
@@ -44,6 +44,36 @@ if(res$Inferred.Model[i] == "M0.1" | res$Inferred.Model[i] == "M0.2" | res$Infer
     res$Inferred.Model2[i] <- res$Inferred.Model[i]
     
   }
+  
+}
+
+#if classification is M1.1
+if(res$Inferred.Model[i] == "M1.1"){
+  
+  #we check the marginal p values between V1 and T2. If they are greather than 0.05, we re classify as "Other"
+  if(res$`pV1.T2`[i] > 0.05){
+    
+    res$Inferred.Model2[i] <- "Other"
+    
+  }
+}else{
+  
+  res$Inferred.Model2[i] <- res$Inferred.Model[i]
+  
+}
+
+#if classification is M1.2
+if(res$Inferred.Model[i] == "M1.2"){
+  
+  #we check the marginal p values between V1 and T1. If they are greather than 0.05, we re classify as "Other"
+  if(res$`pV1.T1`[i] > 0.05){
+    
+    res$Inferred.Model2[i] <- "Other"
+    
+  }
+}else{
+  
+  res$Inferred.Model2[i] <- res$Inferred.Model[i]
   
 }
 
