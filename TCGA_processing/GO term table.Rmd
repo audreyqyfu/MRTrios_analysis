@@ -1,0 +1,342 @@
+---
+title: "GO enrichment analysis"    
+author: Bandita Karki
+output: html_document
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#load the packages
+library("data.table")
+library("topGO")
+library("org.Hs.eg.db")
+library("ggplot2")
+library("knitr")
+
+#set directory
+setwd("/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/Probe info/addGeneMeans")
+
+#read in the dataset containing genes of interest
+M1.1.pos = read.csv("M1.1_pos.csv")
+#dim(M1.1.pos)
+#M1.1.pos[1,]
+
+#Extract the genes of interest
+up.genes = unique(M1.1.pos$Biomart_GeneName)
+#length(up.genes)
+#head(up.genes)
+
+#directory for the data with the universal list
+setwd("/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis")
+
+#read in the dataset containing the universal gene list
+geneList = fread("geneList.txt")
+
+#extract the universal gene list
+all.genes = geneList$genes
+#head(all.genes)
+
+```
+
+**Method = "classic" and Ontology = "BP" (Biological Process)**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#specify the ontology (BP, MF, or CC)
+ontology <- "BP"
+
+#specify the algorithm (classic or weight01)
+algorithm <- "classic"
+
+#specify the test statistic
+statistic <- "fisher"
+
+#identify the genes in universal gene list that are in the genes of interest list
+#so if a gene in universal gene list contains a gene that is in the genes of interest list
+#we assign values 1
+#if not 0
+upList <- factor(as.integer(all.genes %in% up.genes))
+names(upList) <- all.genes
+
+head(upList, 30)
+
+table(upList)
+
+#create topG0 data with the GO IDs for the specified ontology
+upGOdata <- new("topGOdata", ontology = ontology, allGenes = upList, geneSel = function(x)(x == 1), 
+                nodeSize = 10, annot = annFUN.org, mapping = "org.Hs.eg.db", ID = "SYMBOL")
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#extract the GO term table using the specified algorithm and test statistic
+upRes <- runTest(upGOdata, algorithm = algorithm, statistic = statistic)
+upRes
+
+#sort the table by the pvalues
+up.tab <- GenTable(upGOdata, Pval = upRes, topNodes = 6873)
+
+#generates a fancy table
+kable(up.tab, caption = "Significance of GO terms according to classic method and BP ontology")
+
+# write.csv(up.tab, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_classic_BP.csv", row.names=TRUE)
+
+```
+
+**Method = "weight01" and Ontology = "BP" (Biological Process)**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#specify the algorithm
+algorithm <- "weight01"
+
+#extract the GO term table using the specified algorithm and test statistic
+upRes <- runTest(upGOdata, algorithm = algorithm, statistic = statistic)
+upRes
+
+#sort the table by the pvalues
+up.tab <- GenTable(upGOdata, Pval = upRes, topNodes = 6873)
+
+#generates a fancy table
+kable(up.tab, caption = "Significance of GO terms according to weight01 method and BP ontology")
+
+# write.csv(up.tab, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_weight01_BP.csv", row.names=TRUE)
+
+```
+
+
+**Method = "classic" and Ontology = "MF" (Molecular Function)**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#specify the ontology
+ontology <- "MF"
+
+#specify the algorithm
+algorithm <- "classic"
+
+#create topG0 data with the GO IDs for the specified ontology
+upGOdata <- new("topGOdata", ontology = ontology, allGenes = upList, geneSel = function(x)(x == 1), 
+                nodeSize = 10, annot = annFUN.org, mapping = "org.Hs.eg.db", ID = "SYMBOL")
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#extract the GO term table using the specified algorithm and test statistic
+upRes <- runTest(upGOdata, algorithm = algorithm, statistic = statistic)
+upRes
+
+#sort the table by the pvalues
+up.tab <- GenTable(upGOdata, Pval = upRes, topNodes = 1312)
+
+#generates a fancy table
+kable(up.tab, caption = "Significance of GO terms according to classic method and MF ontology")
+
+# write.csv(up.tab, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_classic_MF.csv", row.names=TRUE)
+
+```
+
+**Method = "weight01" and Ontology = "MF" (Molecular Function)**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#specify the algorithm
+algorithm <- "weight01"
+
+#extract the GO term table using the specified algorithm and test statistic
+upRes <- runTest(upGOdata, algorithm = algorithm, statistic = statistic)
+upRes
+
+#sort the table by the pvalues
+up.tab <- GenTable(upGOdata, Pval = upRes, topNodes = 1312)
+
+#generates a fancy table
+kable(up.tab, caption = "Significance of GO terms according to weight01 method and MF ontology")
+
+# write.csv(up.tab, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_weight01_MF.csv", row.names=TRUE)
+
+```
+
+
+**Method = "classic" and Ontology = "CC" (Cellular Component)**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#specify the ontology
+ontology <- "CC"
+
+#specify the algorithm
+algorithm <- "classic"
+
+#create topG0 data with the GO IDs for the specified ontology
+upGOdata <- new("topGOdata", ontology = ontology, allGenes = upList, geneSel = function(x)(x == 1), 
+                nodeSize = 10, annot = annFUN.org, mapping = "org.Hs.eg.db", ID = "SYMBOL")
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#extract the GO term table using the specified algorithm and test statistic
+upRes <- runTest(upGOdata, algorithm = algorithm, statistic = statistic)
+upRes
+
+#sort the table by the pvalues
+up.tab <- GenTable(upGOdata, Pval = upRes, topNodes = 883)
+
+#generates a fancy table
+kable(up.tab, caption = "Significance of GO terms according to classic method and CC ontology")
+
+# write.csv(up.tab, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_classic_CC.csv", row.names=TRUE)
+
+```
+
+**Method = "weight01" and Ontology = "CC" (Cellular Component)**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+#specify the algorithm
+algorithm <- "weight01"
+
+#extract the GO term table using the specified algorithm and test statistic
+upRes <- runTest(upGOdata, algorithm = algorithm, statistic = statistic)
+upRes
+
+#sort the table by the pvalues
+up.tab <- GenTable(upGOdata, Pval = upRes, topNodes = 883)
+
+#generates a fancy table
+kable(up.tab, caption = "Significance of GO terms according to weight01 method and CC ontology")
+
+# write.csv(up.tab, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_weight01_CC.csv", row.names=TRUE)
+
+```
+
+
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+
+
+```
