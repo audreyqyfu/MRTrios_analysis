@@ -1,7 +1,7 @@
 ##################################################################
 #                                                                #
 #                                                                #
-#    Codes currently used start from line 110 (06/05/2023)       #
+#    Codes currently used start from line 301 (06/07/2023)       #
 #                                                                #
 #                                                                #
 ##################################################################
@@ -298,3 +298,68 @@ kable(up.tab, caption = "Significance of GO terms according to weight01 method a
 
 # write.csv(up.tab, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_weight01_CC.csv", row.names=TRUE)
 
+#############################################################
+
+library(gprofiler2)
+
+#set directory
+setwd("/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/Probe info/addGeneMeans")
+
+#read in the dataset containing genes of interest
+M1.1.pos = read.csv("M1.1_pos.csv")
+
+M1.2.pos = read.csv("M1.2_pos.csv")
+
+M1.1.neg = read.csv("M1.1_neg.csv")
+
+M1.2.neg = read.csv("M1.2_neg.csv")
+
+#Extract the genes of interest
+up.genes = unique(M1.2.pos$Biomart_GeneName)
+#length(up.genes)
+#head(up.genes)
+
+####### Trying different methods #########
+gostres1 = gost(query = up.genes, organism = "hsapiens", sources = "GO:BP")
+head(gostres1$result)
+dim(gostres1$result)
+
+gostplot(gostres1)
+
+gostres2 = gost(query = up.genes, organism = "hsapiens", correction_method = "fdr", sources = "GO:BP")
+head(gostres2$result)
+dim(gostres2$result)
+
+gostplot(gostres2)
+
+gostres3 = gost(query = up.genes, organism = "hsapiens", correction_method = "bonferroni", sources = "GO:BP")
+head(gostres3$result)
+
+######### function to perform the analysis
+GOanalysis <- function(data, source){
+  
+  #Extract the genes of interest
+  up.genes = unique(data$Biomart_GeneName)
+  
+  #use the gost function to get the analysis result
+  gostres1 = gost(query = up.genes, organism = "hsapiens", sources = source)
+  
+  #head(gostres1$result)
+  #dim(gostres1$result)
+  
+  #changing the result to a dataframe so it can be saved as csv file
+  df <- apply(gostres1$result,2,as.character)
+  
+  return(df)
+  
+}
+
+M1.1.pos_GO = GOanalysis(M1.1.pos, "GO:BP")
+M1.2.pos_GO = GOanalysis(M1.2.pos, "GO:BP")
+M1.1.neg_GO = GOanalysis(M1.1.neg, "GO:BP")
+M1.2.neg_GO = GOanalysis(M1.2.neg, "GO:BP")
+
+write.csv(M1.1.pos_GO, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_M1.1_ERpos_BP_gSCS.csv", row.names=FALSE)
+write.csv(M1.2.pos_GO, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_M1.2_ERpos_BP_gSCS.csv", row.names=FALSE)
+write.csv(M1.1.neg_GO, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_M1.1_ERneg_BP_gSCS.csv", row.names=FALSE)
+write.csv(M1.2.neg_GO, "/Users/kark6289/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/GO enrichment analysis/GOtable_M1.2_ERneg_BP_gSCS.csv", row.names=FALSE)
