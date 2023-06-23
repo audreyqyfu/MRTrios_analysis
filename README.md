@@ -9,3 +9,4 @@ DataProcessing.R
 mainTrioMatch.R    
 main.findPCs.R    
 main.analyzeTrios.R    
+GOanalysis.R    
