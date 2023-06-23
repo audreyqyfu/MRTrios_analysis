@@ -5,7 +5,9 @@ The scripts should be used in the following order:
 
 - `DataProcessing.R`: this file performs logit transformation of the methylation data and extract positive and negative ER patients from the clinical dataset.    
 - `mainTrioMatch.R`: this file forms trios by integrating the CNA, methylation, and gene expression data.
-- `trio.gene.type.sep.R`     
+- `trio.gene.type.sep.R`
+- `trio.location.Prcoding.lncRNA.R`
+- `model loc data extract.R`
 - `main.findPCs.R`: this file calculates the principal component (PC) score matrix for methylation and for gene expression data, and identifies PCs significantly associated each trio.    
 - `main.analyzeTrios.R`: this file performs causal network inference for trios and their associated confounders (i.e., PCs) to infer the causal models.   
 - `HumanMethProbeInfo.R`     
