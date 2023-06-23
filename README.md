@@ -9,4 +9,5 @@ DataProcessing.R
 mainTrioMatch.R    
 main.findPCs.R    
 main.analyzeTrios.R    
+HumanMethProbeInfo.R     
 GOanalysis.R    
