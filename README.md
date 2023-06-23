@@ -6,6 +6,6 @@ This repo consists of R codes used in the process of building the package MRTrio
 Order of files to be used:
 
 DataProcessing.R    
-mainTrioMatch.R
-main.findPCs.R
-main.analyzeTrios.R
+mainTrioMatch.R    
+main.findPCs.R    
+main.analyzeTrios.R    
