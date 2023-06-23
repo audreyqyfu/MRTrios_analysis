@@ -1,4 +1,4 @@
-# MRTrio_analysis
+# MRTrios_analysis
 This repo consists of R scripts that aim in causal network inference with Mendelian randomization for trios consisting of copy number alteration, gene expression and DNA methylation.  The R scripts here perform preprocessing, causal inference (using functions in the R package MRTrios: https://github.com/audreyqyfu/MRTrios), and downstream analyses.  The user will need to change the paths and names of the files mentioned in these scripts to suit their own needs.
 
 The scripts should be used in the following order:
