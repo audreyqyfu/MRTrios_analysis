@@ -1,9 +1,4 @@
-#source all the functions so they can be accessed and used later
-source("/mnt/ceph/kark6289/test_trio/trios/trio.code/trios.R")
-source("/mnt/ceph/kark6289/test_trio/trios/trio.code/findTrioAll.R")
-source("/mnt/ceph/kark6289/test_trio/trios/trio.code/findDups.R")
-source("/mnt/ceph/kark6289/test_trio/trios/trio.code/removeNA.R")
-source("/mnt/ceph/kark6289/test_trio/trios/trio.code/addDups.R")
+# need to load the MRTrios package
 
 #set the working directory
 setwd("/mnt/ceph/kark6289")
@@ -37,10 +32,10 @@ meth <- TCGA.meth
 dim(meth)
 
 
-################################### matching trios ##############
+################################### first round of matching trios ##############
 
 #go to the findTrioAll function and run the code and get the trios dataset
-final <- findTrioAll(meth, cna, gene, nStartMeth=5, nStartGene=3)
+final <- findTrioAll(meth, cna, gene, nStartMeth=5, nStartGene=3, nStartCNA=3)
 print(final[1:5,])
 
 colnames(final) <- c("Gene name", "meth.row", "cna.row", "gene.row")
@@ -49,13 +44,16 @@ final.colnames <- colnames(final)
 setwd("/mnt/ceph/kark6289/test_trio/trios")
 getwd()
 
+#save the trios dataset to the path in txt format
+#some methylation probes in this dataset are not matched to any gene
 write.table(t(final.colnames), file = "/mnt/ceph/kark6289/test_trio/trios/pre.final.txt", sep = "\t", row.names = FALSE,
                          col.names = FALSE, append = FALSE,quote=FALSE)
 
-
-#save the trios dataset to the path in txt format
 write.table(final, file = "/mnt/ceph/kark6289/test_trio/trios/pre.final.txt", sep = "\t", row.names = FALSE,
                          col.names = FALSE, append = TRUE,quote=FALSE)
+
+
+################################### second round of matching trios ##############
 
 #find the duplicates for genes with multiple entrez ids in CNA data
 final.tmp <- cna.add.dups(final, cna)
@@ -71,11 +69,10 @@ final.res <- gene.add.dups(final, dup.final, gene)
 print(final.res[1:10,])
 print(dim(final.res))
 
+#save the final trio data matrix to txt file
 write.table(t(colnames(final.res)), file = "/mnt/ceph/kark6289/test_trio/trios/Trios.final.txt", sep = "\t", row.names = FALSE,
                          col.names = FALSE, append = FALSE,quote=FALSE)
 
-
-#save the data to txt file
 write.table(final.res, file = "/mnt/ceph/kark6289/test_trio/trios/Trios.final.txt", sep = "\t", row.names = FALSE,
             col.names = FALSE, append = TRUE,quote=FALSE)
 
