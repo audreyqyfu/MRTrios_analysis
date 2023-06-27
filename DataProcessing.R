@@ -42,14 +42,14 @@ write.table(meth, file = "/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth
 TCGA.meth <- as.data.frame(fread("/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.txt"))
 dim(TCGA.meth)
 
-data <- TCGA.meth[rowSums(is.na(TCGA.meth[,5:899])) != ncol(TCGA.meth[,5:899]), ]
+data <- TCGA.meth[rowSums(is.na(TCGA.meth[,-(1:4)])) != ncol(TCGA.meth[,-(1:4)]), ]
 dim(data)
 
 # split data into numbers and probe info
 data.only <- t(data[,-(1:4)])
 data.info <- data[,1:4]
 
-data.nona <- log(data[,5:899]/(1-data[,5:899]))
+data.nona <- log(data[,-(1:4)]/(1-data[,-(1:4)]))
 
 final <- cbind(data.info, data.nona)
 
