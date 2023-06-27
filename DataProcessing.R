@@ -15,7 +15,7 @@ for(i in 1:100) {
 
 dev.off()
 
-#################################################
+##################### logit transformation of methylation data ############################
 
 setwd("/mnt/ceph/megheib/Cancer_Genomics/TCGA_data_results")
 getwd()
@@ -24,18 +24,20 @@ load("TCGA.meth.RData")
 dim(TCGA.meth)
 
 data <- TCGA.meth[rowSums(is.na(TCGA.meth[,5:899])) != ncol(TCGA.meth[,5:899]), ]
-
 dim(data)
+
+data.nona <- log(data[,5:899]/(1-data[,5:899]))
+
 
 # split data into numbers and probe info
 data.only <- t(data[,-(1:4)])
 data.info <- data[,1:4]
 rm(data)
 
+############################ split the patients into ER+ and ER- patients ##################################
 
 setwd("/Users/12083/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/TCGA")
 # getwd()
-
 
 library(data.table)
 clinical.data <- fread("brca_tcga_clinical_data.txt")
