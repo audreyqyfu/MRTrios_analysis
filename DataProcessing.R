@@ -1,37 +1,61 @@
 
-########## histograms for few methylation probes ###########
 
-pdf(file = "/mnt/ceph/kark6289/TCGA_analysis/newhist/unscaled/TCGA.pdf", onefile=TRUE)
+############ changing "." between ID names to "-" ################################
 
-for(i in 1:100) {
-  
-  print(i)
-  
-  data.nona <- log(data[i,5:899]/(1-data[i,5:899]))
-  
-  hist(as.numeric(data.nona), xlim = c(-2,3.5), main = paste("Histogram of (TCGA) ",data$Row.names[i], sep = ""), xlab = "Methylation")
-  
-}
-
-dev.off()
-
-##################### logit transformation of methylation data ############################
-
+#set the directory
 setwd("/mnt/ceph/megheib/Cancer_Genomics/TCGA_data_results")
 getwd()
 
+#load the library
+library(data.table)
+library(splitstackshape)
+
 load("TCGA.meth.RData")
+dim(TCGA.meth)
+meth = TCGA.meth
+
+for(i in 5:ncol(meth)){
+
+  print(i)
+
+  #split the name in the TCGA data
+  split.ID <- unlist(strsplit(as.character(colnames(meth)[i]), "[.]"))
+  split.ID
+
+  #now merge the first 4 parts
+  new.rowname <- paste(split.ID[1],"-",split.ID[2],"-",split.ID[3],"-",split.ID[4], sep = "")
+  new.rowname
+
+  #replace the old column name to the new column name
+  colnames(meth)[i] <- new.rowname
+
+
+}
+
+#save it to a new txt file
+write.table(meth, file = "/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.txt", sep = "\t", row.names = FALSE,
+            col.names = TRUE, append = TRUE, quote=FALSE)
+
+
+##################### logit transformation of methylation data ############################
+
+TCGA.meth <- as.data.frame(fread("/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.txt"))
 dim(TCGA.meth)
 
 data <- TCGA.meth[rowSums(is.na(TCGA.meth[,5:899])) != ncol(TCGA.meth[,5:899]), ]
 dim(data)
 
-data.nona <- log(data[,5:899]/(1-data[,5:899]))
-
 # split data into numbers and probe info
 data.only <- t(data[,-(1:4)])
 data.info <- data[,1:4]
-rm(data)
+
+data.nona <- log(data[,5:899]/(1-data[,5:899]))
+
+final <- cbind(data.info, data.nona)
+
+#save it to a new txt file
+write.table(final, file = "/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.logit.txt", sep = "\t", row.names = FALSE,
+            col.names = TRUE, append = TRUE, quote=FALSE)
 
 ############################ split the patients into ER+ and ER- patients ##################################
 
@@ -39,6 +63,19 @@ setwd("/Users/12083/OneDrive - University of Idaho/DOCUMENTS/AUDREY FU LAB/TCGA"
 # getwd()
 
 library(data.table)
+TCGA.meth <- as.data.frame(fread("/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.logit.txt"))
+dim(TCGA.meth)
+
+data <- TCGA.meth[rowSums(is.na(TCGA.meth[,5:ncol(TCGA.meth)])) != ncol(TCGA.meth[,5:ncol(TCGA.meth)]), ]
+dim(data)
+data[1:5,1:5]
+
+dim(data)
+
+# split data into numbers and probe info
+data.only <- t(data[,-(1:4)])
+data.info <- data[,1:4]
+
 clinical.data <- fread("brca_tcga_clinical_data.txt")
 clinical.data[1:5,1:5]
 dim(clinical.data)
@@ -84,4 +121,22 @@ if(tmp$`ER Status By IHC`[row.num] == "Positive"){
 }
 
 
+########## histograms for few methylation probes (transformed data) ###########
+
+data <- as.data.frame(fread("/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.txt"))
+dim(data)
+
+pdf(file = "/mnt/ceph/kark6289/TCGA_analysis/newhist/unscaled/TCGA.pdf", onefile=TRUE)
+
+for(i in 1:100) {
+  
+  print(i)
+  
+  data.nona <- log(data[i,5:899]/(1-data[i,5:899]))
+  
+  hist(as.numeric(data.nona), xlim = c(-2,3.5), main = paste("Histogram of (TCGA) ",data$Row.names[i], sep = ""), xlab = "Methylation")
+  
+}
+
+dev.off()
 
