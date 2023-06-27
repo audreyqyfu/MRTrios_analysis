@@ -54,7 +54,7 @@ final <- cbind(data.info, data.nona)
 
 #save it to a new txt file
 write.table(final, file = "/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.logit.txt", sep = "\t", row.names = FALSE,
-            col.names = TRUE, append = TRUE, quote=FALSE)
+            col.names = TRUE, append = FALSE, quote=FALSE)
 
 ############################ split the patients into ER+ and ER- patients ##################################
 
