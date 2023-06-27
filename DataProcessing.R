@@ -46,7 +46,6 @@ data <- TCGA.meth[rowSums(is.na(TCGA.meth[,-(1:4)])) != ncol(TCGA.meth[,-(1:4)])
 dim(data)
 
 # split data into numbers and probe info
-data.only <- t(data[,-(1:4)])
 data.info <- data[,1:4]
 
 data.nona <- log(data[,-(1:4)]/(1-data[,-(1:4)]))
