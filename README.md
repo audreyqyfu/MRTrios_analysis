@@ -16,5 +16,5 @@ Additional scripts may be used for debugging:
 - `model loc data extract.R`: this file extracts row numbers in the trio data matrix when a specific model type and location (e.g., TSS1500, body, 3' UTR, etc.) of a gene is provided.
 
 To install the package from GitHub:    
-  install_github("audreyqyfu/MRTrios")
+    install_github("audreyqyfu/MRTrios")
   
