@@ -23,7 +23,7 @@ for(i in 5:ncol(meth)){
   split.ID
 
   #now merge the first 4 parts
-  new.rowname <- paste(split.ID[1],"-",split.ID[2],"-",split.ID[3],"-",split.ID[4], sep = "")
+  new.rowname <- paste(split.ID[1],"-",split.ID[2],"-",split.ID[3],"-01", sep = "")
   new.rowname
 
   #replace the old column name to the new column name
