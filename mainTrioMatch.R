@@ -56,7 +56,7 @@ write.table(final, file = "/mnt/ceph/kark6289/test_trio/trios/pre.final.txt", se
 ################################### second round of matching trios ##############
 
 #find the duplicates for genes with multiple entrez ids in CNA data
-final.tmp <- cna.add.dups(final, cna)
+final.tmp <- addDupsCNA(final, cna)
 
 final <- final.tmp[[1]]
 print(dim(final))
@@ -65,7 +65,7 @@ dup.final <- final.tmp[[2]]
 print(dim(dup.final))
 
 #find the duplicates for genes with multiple entrez ids in Gene Exp data
-final.res <- gene.add.dups(final, dup.final, gene)
+final.res <- addDupsGENE(final, dup.final, gene)
 print(final.res[1:10,])
 print(dim(final.res))
 
