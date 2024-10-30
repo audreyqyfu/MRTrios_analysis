@@ -1,5 +1,7 @@
 #PROJECT: Visualizing Causal Network Inferences for Transcription and Methylation Relationship in Breast Cancer
 
+# by Kristen Tran
+
 ###09.04.2024###
 #set working directory
 setwd("C:/Users/02kri/OneDrive - Wayne State University")
