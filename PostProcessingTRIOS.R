@@ -1,6 +1,4 @@
-#PROJECT: Visualizing Causal Network Inferences for Transcription and Methylation Relationship in Breast Cancer
-
-# by Kristen Tran
+#PROJECT: Investigating Causal Network Inference for Transcription and Methylation Relationship in Breast Cancer
 
 ###09.04.2024###
 #set working directory
@@ -12,7 +10,7 @@ setwd("C:/Users/02kri/OneDrive - Wayne State University")
 ##Activating trios data with data.frame
 library('data.table')
 
-#Loading in causal model interference of ER+(code reference: methylation_data)
+#Loading in causal model inference of ER+(code reference: methylation_data)
 methylation_data <-read.delim('model.trio.MRGN.all.posER.reclassify2.txt')
 
 #Loading in list of TRIOS consisting of gene expression (GE), methylation and   (code reference: trios)
@@ -42,7 +40,7 @@ length(results) # = 16331
 length(unique(positive_genes$gene.row)) #16328? (off by 3)
 ##OBSERVATION: gene name & gene row columns in ER+ data do not align in the # of unique genes (possibly merging genes together?)
 
-#Loading in causal model interference of ER- (code reference: second_methylation_data)
+#Loading in causal model inference of ER- (code reference: second_methylation_data)
 second_methylation_data <- read.delim('model.trio.MRGN.all.negER.reclassify2.txt')
 
 #Finding overall unique genes within ER- Data
@@ -73,8 +71,8 @@ pos_meth_PCA <- read.delim('PCA.meth.posER.txt', row.names = 1) #methylation ER+
 
 
 ###09.18.2024###
-#GOAL: Generate scatter plots from causal inferences (code reference: "methylation_data") by aligning patient's TRIOS
-#PURPOSE: finding each patient in each trios raw dataset by matching first column of PCA scores in ER+/- to column names of raw data which contain patients 
+#GOAL: Generate pairwise scatter plots to visualize causal models (code reference: "methylation_data") 
+#PURPOSE: Must investigate extracted Trios with genomic data at individual levels
 
 #Avoiding errors of "list" by turning into dataframe
 GE_rawdata_tmp <- as.data.frame(GE_rawdata) #made with Dr. Fu
@@ -82,6 +80,7 @@ ME_rawdata_tmp <- as.data.frame(meth_rawdata)
 CNA_rawdata_tmp <- as.data.frame(CNA_rawdata)
 
 #Extracting the row names of ER+ methylation PCA intermediate file 
+#this is the patients' IDs
 first_column <- rownames(pos_meth_PCA)
 
 #Matching columns of GE_raw data to extracted row names of ER+ methylation PCA intermediate file
@@ -93,6 +92,7 @@ GE_ERpos <- GE_rawdata_tmp[,final_matching]
 
 ###09.23.2024###
 #Extracting the row names of ER+ GE PCA intermediate file
+#this is the patients' IDs
 column <- rownames(pos_GE_PCA)
 
 #Matching columns of GE_raw data to extracted row names of ER+ GE PCA intermediate file 
@@ -134,7 +134,8 @@ moree_matchingg <- match(revised_patients, colnames(CNA_rawdata))
 positive_CNA <- CNA_rawdata_tmp[,moree_matchingg]
 
 
-#Now the number of patients is different between each raw data set (572 variables v. 564 variables). We must eliminate the same eight patients for all matching scenarios
+#Now the number of patients is different between each raw data set (572 variables v. 564 variables). 
+#We must eliminate the same eight patients for all matching scenarios
 ###10.09.2024###
 #NEW matching with GE data using "revised_patients"
 matching <-match(revised_patients, colnames(GE_rawdata))
@@ -154,20 +155,22 @@ positive_meth <- ME_rawdata_tmp[, more_matching]
 #meth.row, cna.row and gene.row should contain numbers for you to use in scatterplots!
 #make sure these values are not in "lists"
 plot(unlist(positive_GE[9100,]), unlist (positive_meth[442663,]), main = 'm1.1 Gene Expression v. Methylation', xlab= 'Gene Expression', ylab = 'Methylation', col="blue", pch=16)
-#cor(unlist(positive_GE[9100,]), unlist (positive_meth[442663,]))
-legend('topright', legend = 'r = NA')
+my.cor.m11 <- cor(unlist(positive_GE[9100,]), unlist (positive_meth[442663,]), use = 'pairwise.complete.obs')
+legend ('topright', legend = paste('r = ', round(my.cor.m11, digits = 3)))
 
 plot(unlist (positive_CNA[15092,]), unlist(positive_GE[9100,]), main ='m1.1 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alternation', ylab = 'Gene Expression', col = 'blue', pch = 16)
-#cor(unlist (positive_CNA[15092,]), unlist(positive_GE[9100,]))
-legend('topright', legend = 'r = 0.217')
+my.cor.m110<- cor(unlist (positive_CNA[15092,]), unlist(positive_GE[9100,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m110, digits = 3)))
 
 plot(unlist (positive_CNA[15092,]), unlist(positive_meth[442663,]), main = 'm1.1 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alternation', ylab = 'Methylation', col = 'blue', pch = 16)
-#cor(unlist (positive_CNA[15092,]), unlist(positive_meth[442663,]))
-legend('topright', legend = 'r = NA')
+my.cor.m1100<- cor(unlist (positive_CNA[15092,]), unlist(positive_meth[442663,]), use = 'pairwise.complete.obs')
+legend ('topright', legend = paste('r = ', round(my.cor.m1100, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = strong correlation
-#CNA v. GE/CNA v. Methylation = GE has stronger correlation to CNA rather than Methylation (possible GE mediation to Methylation)
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = -0.561 
+#CNA v. GE -> r = 0.217 
+#CNA v. Methylation -> r = -0.132
 
 
 
@@ -178,21 +181,23 @@ legend('topright', legend = 'r = NA')
 #now use the code: trios[270023,]
 #meth.row, cna.row and gene.row should contain numbers for you to use in scatterplots!
 #make sure these values are not in "lists"
-plot(unlist(positive_GE[5411,]), unlist (positive_meth[222723,]), main = 'm1.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'pink', pch = 16)
-#cor(unlist(positive_GE[5411,]), unlist (positive_meth[222723,]))
-legend('topright', legend = 'r = 0.317')
+plot(unlist(positive_GE[5411,]), unlist (positive_meth[222723,]), main = 'Initial m1.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'deeppink', pch = 16)
+my.cor.m12<- cor(unlist(positive_GE[5411,]), unlist (positive_meth[222723,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m12, digits = 3)))
 
-plot(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]), main = 'm1.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'pink', pch = 16)
-#cor(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]))
-legend('topright', legend = 'r = -0.116')
+plot(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]), main = 'Initial m1.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'deeppink', pch = 16)
+my.cor.m120 <- cor(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m120, digits = 3)))
 
-plot(unlist (positive_CNA[20630,]), unlist(positive_meth[222723,]), main = 'm1.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'pink', pch = 16)
-#cor(unlist (positive_CNA[20630,]), unlist(positive_meth[222723,]))
-legend('topright', legend = 'r = 0.018')
+plot(unlist (positive_CNA[20630,]), unlist(positive_meth[222723,]), main = 'Initial m1.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'deeppink', pch = 16)
+my.cor.m1200 <- cor(unlist (positive_CNA[20630,]), unlist(positive_meth[222723,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m1200, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = shows that this particular gene does not capture typical correlation
-#CNA v. GE/CNA v. Methylation = Methylation has stronger correlation to CNA rather than Gene Expression
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = 0.317 
+#CNA v. GE -> r = -0.116 
+#CNA v. Methylation -> r = 0.018 (essentially no correlation)
 
 
 #For m0.1 (C → E; no relationship  between E and M):
@@ -201,20 +206,22 @@ legend('topright', legend = 'r = 0.018')
 #now use the code: trios[270001,]
 #meth.row, cna.row and gene.row should contain numbers for you to use in scatterplots!
 plot(unlist(positive_GE[1197,]), unlist (positive_meth[462699,]), main = 'm0.1 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'purple', pch = 16)
-#or(unlist(positive_GE[1197,]), unlist (positive_meth[462699,]))
-legend('topright', legend = 'r = 0.118')
+my.cor.m01 <- cor(unlist(positive_GE[1197,]), unlist (positive_meth[462699,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m01, digits = 3)))
 
 plot(unlist(positive_CNA[264,]), unlist(positive_GE[1197,]), main = 'm0.1 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'purple', pch = 16)
-#cor(unlist(positive_CNA[264,]), unlist(positive_GE[1197,]))
-legend('topright', legend = 'r = 0.327')
+my.cor.m010 <- cor(unlist(positive_CNA[264,]), unlist(positive_GE[1197,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m010, digits = 3)))
 
 plot(unlist(positive_CNA[264,]), unlist(positive_meth[462699,]), main = 'm0.1 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'purple', pch = 16)
-#cor(unlist (positive_CNA[264,]), unlist(positive_meth[462699,]))
-legend('topright', legend = 'r = 0.120')
+my.cor.m0100 <- cor(unlist (positive_CNA[264,]), unlist(positive_meth[462699,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m0100, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = strong correlation
-#CNA v. GE/CNA v. Methylation = same impact?
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = 0.118 
+#CNA v. GE -> r = 0.327 
+#CNA v. Methylation -> r = 0.120 
 
 
 #For m0.2 (C → M; no relationship  between E and M):
@@ -223,21 +230,23 @@ legend('topright', legend = 'r = 0.120')
 #now use the code: trios[270035,] (NOTE: uses same GE and CNA value as m1.2)
 #meth.row, cna.row and gene.row should contain numbers for you to use in scatterplots!
 #make sure these values are not in "lists"
-plot(unlist(positive_GE[5411,]), unlist (positive_meth[424598,]), main = 'm0.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'salmon', pch = 16)
-#cor(unlist(positive_GE[5411,]), unlist (positive_meth[424598,]))
-legend('topright', legend = 'r = 0.084')
+plot(unlist(positive_GE[5411,]), unlist (positive_meth[424598,]), main = 'Initial m0.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'salmon', pch = 16)
+my.cor.m02 <- cor(unlist(positive_GE[5411,]), unlist (positive_meth[424598,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m02, digits = 3)))
 
-plot(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]), main = 'm0.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'salmon', pch = 16)
-#cor(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]))
-legend('topright', legend = 'r = -0.116')
+plot(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]), main = 'Initial m0.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'salmon', pch = 16)
+my.cor.m020 <- cor(unlist (positive_CNA[20630,]), unlist(positive_GE[5411,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m020, digits = 3)))
 
-plot(unlist(positive_CNA[20630,]), unlist(positive_meth[424598,]), main = 'm0.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'salmon', pch = 16)
-#cor(unlist (positive_CNA[20630,]), unlist(positive_meth[424598,]))
-legend('topright', legend = 'r = -0.263')
+plot(unlist(positive_CNA[20630,]), unlist(positive_meth[424598,]), main = 'Initial m0.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'salmon', pch = 16)
+my.cor.m0200 <- cor(unlist (positive_CNA[20630,]), unlist(positive_meth[424598,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m0200, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = some correlation?
-#CNA v. GE/CNA v. Methylation = Methylation has stronger correlation to CNA rather than Gene Expression
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed 
+#GE v. Methylation -> r = 0.084 (essentially no correlation)
+#CNA v. GE -> r = -0.116 
+#CNA v. Methylation -> r = -0.263 
 
 
 #For M3 (E <- C -> M):
@@ -246,21 +255,23 @@ legend('topright', legend = 'r = -0.263')
 #now use the code: trios[270002,] (NOTE: uses same GE value as m1.1)
 #meth.row, cna.row and gene.row should contain numbers for you to use in scatterplots!
 #make sure these values are not in "lists"
-plot(unlist(positive_GE[9100,]), unlist (positive_meth[59380,]), main = 'M3 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'red', pch = 16)
-#cor(unlist(positive_GE[9100,]), unlist (positive_meth[59380,]))
-legend('topright', legend = 'r = 0.011')
+plot(unlist(positive_GE[9100,]), unlist (positive_meth[59380,]), main = 'Initial M3 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'red', pch = 16)
+my.cor.m3 <- cor(unlist(positive_GE[9100,]), unlist (positive_meth[59380,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m3, digits = 3)))
 
-plot(unlist(positive_CNA[15092,]), unlist(positive_GE[9100,]), main = 'M3 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'red', pch = 16)
-#cor(unlist(positive_CNA[15092,]), unlist(positive_GE[9100,]))
-legend('topright', legend = 'r = 0.217')
+plot(unlist(positive_CNA[15092,]), unlist(positive_GE[9100,]), main = 'Initial M3 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'red', pch = 16)
+my.cor.m30 <- cor(unlist(positive_CNA[15092,]), unlist(positive_GE[9100,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m30, digits = 3)))
 
-plot(unlist (positive_CNA[15092,]), unlist(positive_meth[59380,]), main = 'M3 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'red', pch = 16)
-#cor(unlist (positive_CNA[15092,]), unlist(positive_meth[59380,]))
-legend('topright', legend = 'r = 0.092')
+plot(unlist (positive_CNA[15092,]), unlist(positive_meth[59380,]), main = 'Initial M3 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'red', pch = 16)
+my.cor.m300 <- cor(unlist (positive_CNA[15092,]), unlist(positive_meth[59380,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m300, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = no correlation?
-#CNA v. GE/CNA v. Methylation = same impact?
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = 0.011 (essentially no correlation)
+#CNA v. GE -> r = 0.217 
+#CNA v. Methylation -> r = 0.092 (essentially no correlation)
 
 
 ###10.16.2024/10.20.2024###
@@ -269,42 +280,47 @@ legend('topright', legend = 'r = 0.092')
 #CODE: which(methylation_data$Inferred.Model3 == 'M1.2' & methylation_data$Inferred.Model2 == 'M1.2'& methylation_data$Inferred.Model == 'M1.2')
 #code: methylation_data[632,]
 #now use the code:trios[270643,]
-plot(unlist(positive_GE[194,]), unlist(positive_meth[195911,]), main = 'New m1.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col='pink', pch=16)
-#cor(unlist(positive_GE[194,]), unlist(positive_meth[195911,]))
-legend('topright', legend = 'r = -0.205')
+plot(unlist(positive_GE[194,]), unlist(positive_meth[195911,]), main = 'm1.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col='deeppink', pch=16)
+new.cor.m12 <- cor(unlist(positive_GE[194,]), unlist(positive_meth[195911,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m12, digits = 3)))
 
-plot(unlist(positive_CNA[23833,]), unlist(positive_GE[194,]), main = 'New m1.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col='pink', pch=16)
-#cor(unlist(positive_CNA[23833,]), unlist(positive_GE[194,]))
-legend('topright', legend = 'r = 0.144')
+plot(unlist(positive_CNA[23833,]), unlist(positive_GE[194,]), main = 'm1.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col='deeppink', pch=16)
+new.cor.m120 <-cor(unlist(positive_CNA[23833,]), unlist(positive_GE[194,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m120, digits = 3)))
 
-plot(unlist(positive_CNA[23833,]), unlist(positive_meth[195911,]), main = 'New m1.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col='pink', pch=16)
-#cor(unlist(positive_CNA[23833,]), unlist(positive_meth[195911,]))
-legend('topright', legend = 'r = 0.088')
+plot(unlist(positive_CNA[23833,]), unlist(positive_meth[195911,]), main = 'm1.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col='deeppink', pch=16)
+new.cor.m1200 <- cor(unlist(positive_CNA[23833,]), unlist(positive_meth[195911,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m1200, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = 
-#CNA v. GE/CNA v. Methylation = 
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = -0.205 
+#CNA v. GE -> r =  0.144 
+#CNA v. Methylation -> r = 0.088 (essentially no correlation)
+#?? Expectation is that CNA v. GE has a stronger correlation (perhaps involves co-founders?)
 
 
 #For new m0.2 since EFNA2 and others such as lines 249 & 396 is an outlier (SAME as m1.2)
 #CODE: which(methylation_data$Inferred.Model3 == 'M0.2' & methylation_data$Inferred.Model2 == 'M0.2'& methylation_data$Inferred.Model == 'M0.2')
 #code: methylation_data[1027,]
 #now use the code:trios[271038,]
-plot(unlist(positive_GE[952,]), unlist (positive_meth[261661,]), main = 'New m0.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'salmon', pch = 16)
-#cor(unlist(positive_GE[952,]), unlist (positive_meth[261661,]))
-legend('topright', legend = 'r = 0.000')
+plot(unlist(positive_GE[952,]), unlist (positive_meth[261661,]), main = 'm0.2 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'salmon', pch = 16)
+new.cor.m02 <- cor(unlist(positive_GE[952,]), unlist (positive_meth[261661,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m02, digits = 3)))
 
-plot(unlist(positive_CNA[23750,]), unlist (positive_GE[952,]), main = 'New m0.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'salmon', pch = 16)
-#cor(unlist(positive_CNA[23750,]), unlist (positive_GE[952,]))
-legend('topright', legend = 'r = 0.019')
+plot(unlist(positive_CNA[23750,]), unlist (positive_GE[952,]), main = 'm0.2 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'salmon', pch = 16)
+new.cor.m020 <- cor(unlist(positive_CNA[23750,]), unlist (positive_GE[952,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m020, digits = 3)))
 
-plot(unlist(positive_CNA[23750,]), unlist (positive_meth[261661,]), main = 'New m0.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'salmon', pch = 16)
-#cor(unlist(positive_CNA[23750,]), unlist (positive_meth[261661,]))
-legend('topright', legend = 'r = 0.109')
+plot(unlist(positive_CNA[23750,]), unlist (positive_meth[261661,]), main = 'm0.2 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'salmon', pch = 16)
+new.cor.m0200 <- cor(unlist(positive_CNA[23750,]), unlist (positive_meth[261661,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m0200, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = 
-#CNA v. GE/CNA v. Methylation = 
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed 
+#GE v. Methylation -> r =  0.003 (essentially no correlation)
+#CNA v. GE -> r = 0.018 (essentially no correlation)
+#CNA v. Methylation -> r =  0.109 
 
 
 #For m2.1 (C -> E <- M):
@@ -312,20 +328,22 @@ legend('topright', legend = 'r = 0.109')
 #code: methylation_data[499,]
 #now use the code:trios[270510,]
 plot(unlist(positive_GE[3194,]), unlist (positive_meth[481639,]), main = 'm2.1 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'seagreen', pch = 16)
-#cor(unlist(positive_GE[3194,]), unlist (positive_meth[481639,]))
-legend('topright', legend = 'r = -0.010')
+my.cor.m21 <- cor(unlist(positive_GE[3194,]), unlist (positive_meth[481639,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m21, digits = 3)))
 
 plot(unlist(positive_CNA[13439,]), unlist (positive_GE[3194,]), main = 'm2.1 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'seagreen', pch = 16)
-#cor(unlist(positive_CNA[13439,]), unlist (positive_GE[3194,]))
-legend('topright', legend = 'r = 0.379')
+my.cor.m210 <- cor(unlist(positive_CNA[13439,]), unlist (positive_GE[3194,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m210, digits = 3)))
 
 plot(unlist(positive_CNA[13439,]), unlist (positive_meth[481639,]), main = 'm2.1 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'seagreen', pch = 16)
-#cor(unlist(positive_CNA[13439,]), unlist (positive_meth[481639,]))
-legend('topright', legend = 'r = -0.042')
+my.cor.m2100 <-cor(unlist(positive_CNA[13439,]), unlist (positive_meth[481639,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m2100, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = 
-#CNA v. GE/CNA v. Methylation = 
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = -0.010 (essentially no correlation)
+#CNA v. GE -> r = 0.379 
+#CNA v. Methylation -> r = -0.042 (essentially no correlation)
 
 
 #For m2.2 (C -> M <- E):
@@ -344,29 +362,34 @@ plot(unlist(positive_CNA[16315,]), unlist (positive_meth[422513,]), main = 'm2.2
 #cor(unlist(positive_CNA[16315,]), unlist (positive_meth[422513,]))
 legend('topright', legend = 'r = 0.221')
 
-#Interpretation: 
-#GE v. Methylation = 
-#CNA v. GE/CNA v. Methylation = 
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = 0.043 (essentially no correlation)
+#CNA v. GE -> r = 0.078 (essentially no correlation)
+#CNA v. Methylation -> r = 0.221 
+
 
 #For M4 (C -> M <- E):
 #CODE: which(methylation_data$Inferred.Model3 == 'M2.2' & methylation_data$Inferred.Model2 == 'M2.2'& methylation_data$Inferred.Model == 'M2.2')
 #code: methylation_data[785,]
 #now use the code:trios[270796,]
 plot(unlist(positive_GE[9372,]), unlist (positive_meth[483273,]), main = 'M4 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'orange', pch = 16)
-#cor(unlist(positive_GE[9372,]), unlist (positive_meth[483273,]))
-legend('topright', legend = 'r = NA')
+my.cor.m4 <- cor(unlist(positive_GE[9372,]), unlist (positive_meth[483273,]), use = 'pairwise.complete.obs')
+legend ('topright', legend = paste('r = ', round(my.cor.m4, digits = 3)))
 
 plot(unlist(positive_CNA[16444,]), unlist (positive_GE[9372,]), main = 'M4 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'orange', pch = 16)
-#cor(unlist(positive_CNA[16444,]), unlist (positive_GE[9372,]))
-legend('topright', legend = 'r = 0.398')
+my.cor.m40 <- cor(unlist(positive_CNA[16444,]), unlist (positive_GE[9372,]))
+legend ('topright', legend = paste('r = ', round(my.cor.m40, digits = 3)))
 
 plot(unlist(positive_CNA[16444,]), unlist (positive_meth[483273,]), main = 'M4 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'orange', pch = 16)
-#cor(unlist(positive_CNA[16444,]), unlist (positive_meth[483273,]))
-legend('topright', legend = 'r = NA')
+my.cor.m400 <- cor(unlist(positive_CNA[16444,]), unlist (positive_meth[483273,]), use = 'pairwise.complete.obs')
+legend ('topright', legend = paste('r = ', round(my.cor.m400, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = 
-#CNA v. GE/CNA v. Methylation = 
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = - 0.107 
+#CNA v. GE -> r = 0.398 
+#CNA v. Methylation -> r = -0.141 
 
 
 
@@ -375,28 +398,23 @@ legend('topright', legend = 'r = NA')
 #CODE: which(methylation_data$Inferred.Model3 == 'M3' & methylation_data$Inferred.Model2 == 'M3'& methylation_data$Inferred.Model == 'M3')
 #code: methylation_data[804,]
 #now use the code: trios[270815,]
-plot(unlist(positive_GE[12246,]), unlist (positive_meth[356560,]), main = 'New M3 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'red', pch = 16)
-#cor(unlist(positive_GE[12246,]), unlist (positive_meth[356560,]))
-legend('topright', legend = 'r = -0.227')
+plot(unlist(positive_GE[12246,]), unlist (positive_meth[356560,]), main = 'M3 Gene Expression v. Methylation', xlab = 'Gene Expression', ylab = 'Methylation', col = 'red', pch = 16)
+new.cor.m3 <- cor(unlist(positive_GE[12246,]), unlist (positive_meth[356560,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m3, digits = 3)))
 
-plot(unlist(positive_CNA[21113,]), unlist(positive_GE[12246,]), main = 'New M3 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'red', pch = 16)
-#cor(unlist(positive_CNA[21113,]), unlist(positive_GE[12246,]))
-legend('topright', legend = 'r = 0.335')
+plot(unlist(positive_CNA[21113,]), unlist(positive_GE[12246,]), main = 'M3 Copy Number Alteration v. Gene Expression', xlab = 'Copy Number Alteration', ylab = 'Gene Expression', col = 'red', pch = 16)
+new.cor.m30 <- cor(unlist(positive_CNA[21113,]), unlist(positive_GE[12246,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m30, digits = 3)))
 
-plot(unlist(positive_CNA[21113,]), unlist(positive_meth[356560,]), main = 'New M3 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'red', pch = 16)
-#cor(unlist(positive_CNA[21113,]), unlist(positive_meth[356560,]))
-legend('topright', legend = 'r = -0.233')
+plot(unlist(positive_CNA[21113,]), unlist(positive_meth[356560,]), main = 'M3 Copy Number Alteration v. Methylation', xlab = 'Copy Number Alteration', ylab = 'Methylation', col = 'red', pch = 16)
+new.cor.m300 <-cor(unlist(positive_CNA[21113,]), unlist(positive_meth[356560,]))
+legend ('topright', legend = paste('r = ', round(new.cor.m300, digits = 3)))
 
-#Interpretation: 
-#GE v. Methylation = 
-#CNA v. GE/CNA v. Methylation = 
-
-
-
-
-
-
-
+##Correlation (look at correlation as an absolute value): 
+##+/- only shows what way the correlation is graphed
+#GE v. Methylation -> r = -0.227 
+#CNA v. GE -> r = 0.335 
+#CNA v. Methylation -> r = -0.233 
 
 
 
