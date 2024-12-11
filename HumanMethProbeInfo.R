@@ -14,6 +14,7 @@ df1 <- read.delim("/mnt/ceph/kark6289/PCandTrioAnalysis/downsampling/pos_ER/outp
 
 df.loc <- read.csv("/mnt/ceph/kark6289/test_trio/trios/trio.final.protein.coding.location.csv", sep = "\t")
 
+# this probe info file is identical to GPL13534_HumanMethylation450_15017482_v.1.1 2.csv
 humanmeth <- read.csv("/mnt/ceph/kark6289/humanmethylation450_15017482_v1-2.csv", skip = 7, header = TRUE)
 
 TCGA.meth <- as.data.frame(fread("/mnt/ceph/kark6289/TCGA_analysis/split.names.TCGA.meth.logit.txt"))
