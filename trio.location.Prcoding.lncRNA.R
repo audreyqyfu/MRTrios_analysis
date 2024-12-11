@@ -2,7 +2,9 @@
 library(data.table)
 
 #read in the datasets
-df <- read.csv("/mnt/ceph/kark6289/GPL13534_HumanMethylation450_15017482_v.1.1.csv", skip = 7, header = TRUE)
+# probe info data downloaded from GEO:
+# https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL13534
+df <- read.csv("/mnt/ceph/kark6289/GPL13534_HumanMethylation450_15017482_v.1.2.csv", skip = 7, header = TRUE)
 dim(df)
 
 trios <- data.frame(fread("/mnt/ceph/kark6289/test_trio/trios/trio.final.protein.coding.txt"))
