@@ -31,7 +31,7 @@ dim(cna)
 trios <- data.frame(fread("/mnt/ceph/kark6289/test_trio/trios/trio.final.protein.coding.txt"))
 
 #read in the bio mart data
-biomart <- read.delim("/mnt/ceph/kark6289/PCandTrioAnalysis/output.10.14/mart_export_.txt", header = TRUE)
+biomart <- read.delim("/mnt/ceph/kark6289/PCandTrioAnalysis/output.10.14/ensembl37_genes_p13_biomart.txt", header = TRUE)
 
 #reading in the neg and pos ER individuals data
 clinical.neg <- fread("/mnt/ceph/kark6289/TCGA_analysis/names.neg.patient2.txt", header = FALSE)
