@@ -45,14 +45,14 @@ dim(clinical.pos)
 pos.ind <- clinical.pos[,1]
 
 
-M0.1_pos = HumanMethProbeInfo(df1, "M0.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
-M0.2_pos = HumanMethProbeInfo(df1, "M0.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
+M0.1_pos = extractHumanMethProbeInfo(df1, "M0.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
+M0.2_pos = extractHumanMethProbeInfo(df1, "M0.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
 
-M0.1_neg = HumanMethProbeInfo(df2, "M0.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
-M0.2_neg = HumanMethProbeInfo(df2, "M0.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
+M0.1_neg = extractHumanMethProbeInfo(df2, "M0.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
+M0.2_neg = extractHumanMethProbeInfo(df2, "M0.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
 
-M1.1_pos = HumanMethProbeInfo(df1, "M1.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
-M1.2_pos = HumanMethProbeInfo(df1, "M1.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
+M1.1_pos = extractHumanMethProbeInfo(df1, "M1.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
+M1.2_pos = extractHumanMethProbeInfo(df1, "M1.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, pos.ind)
 
-M1.1_neg = HumanMethProbeInfo(df2, "M1.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
-M1.2_neg = HumanMethProbeInfo(df2, "M1.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
+M1.1_neg = extractHumanMethProbeInfo(df2, "M1.1", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
+M1.2_neg = extractHumanMethProbeInfo(df2, "M1.2", TCGA.meth, gene.exp, cna, trios, humanmeth, biomart, 5, 3, 3, neg.ind)
