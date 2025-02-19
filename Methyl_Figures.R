@@ -11,8 +11,9 @@ M0.1_neg <- read.delim("/Users/lianzuo/LZ/WayneSU/Methyl_Analysis_LZ/Data_Result
 M0.1_pos <- read.delim("/Users/lianzuo/LZ/WayneSU/Methyl_Analysis_LZ/Data_Result_Methyl_LZ/M0.1_pos_extract.txt",sep = "\t")
 
 
-
-################## Figure_3.4 log(distance) diff_cpG_mapinfo plots ###########################
+##########################################################################################################################
+######  Distribution of the log10 (distance) between the nearby CpG island and the CpG in the methylation probe ##########
+##########################################################################################################################
 
 setwd("/Users/lianzuo/LZ/WayneSU/Methyl_Analysis_LZ/Plot_Result_Methyl_LZ")
 library(ggplot2)
@@ -45,8 +46,6 @@ hist_M1.2_pos_log_distance=ggplot(M1.2_pos%>% select(diff_cpG_mapinfo) %>% drop_
   geom_histogram(aes(y = ..density..), bins = 40, fill = "#f781bf", color = "black", alpha = 0.7) +
   labs(title = "M1.2",x = "log10 (distance)",y = "Density") + theme_bw()+
   theme(plot.title = element_text(size=10,hjust = 0.5))+xlim(-2,4)+ylim(0,1)
-
-
 
 hist_M0.1_neg_log_distance=ggplot(M0.1_neg%>% select(diff_cpG_mapinfo) %>% drop_na() %>% abs(), aes(x = log10(diff_cpG_mapinfo))) +
   geom_histogram(aes(y = ..density..), bins = 35, fill = "#377eb8", color = "black", alpha = 0.7) +
@@ -83,9 +82,12 @@ log_distance_layout_2
 plot_grid(log_distance_layout_1,log_distance_layout_2,labels = "AUTO",label_size = 15, ncol = 1)
 #ggsave(6*8inches) potrait
 #plot_grid(log_distance_layout_1,log_distance_layout_2,labels = c("A (ER+)","B (ER-)"), ncol = 1)
+##########
 
-################## Figure_3.5 log(distance) diff_mapinfo_geneStart plots ###########################
 
+######################################################################################################################
+### Distribution of the log 10 (distance) between the CpG in the methylation probe and the start position of a gene.
+######################################################################################################################
 
 hist_M0.1_pos_log_distance_start=ggplot(M0.1_pos %>% select(diff_mapinfo_geneStart) %>% drop_na() %>% abs(), aes(x = log10(abs(diff_mapinfo_geneStart)))) +
   geom_histogram(aes(y = ..density..), bins = 35, fill = "#f781bf", color = "black", alpha = 0.7) +
@@ -150,9 +152,12 @@ log_distance_start_layout_2
 
 plot_grid(log_distance_start_layout_1,log_distance_start_layout_2,labels = "AUTO", label_size = 15,ncol = 1)
 #ggsave(6*8inches)
+############
 
-################## Figure_3.6 log(length) plots ###########################
 
+######################################################################################################################
+### Distribution of the log 10 (length) between the start position and the end position of a gene. 
+######################################################################################################################
 
 hist_M0.1_pos_logLength=ggplot(M0.1_pos%>% select(gene_length) %>% distinct(), aes(x = log10(gene_length))) +
   geom_histogram(aes(y = ..density..), bins = 30, fill = "#f781bf", color = "black", alpha = 0.7) +
@@ -208,17 +213,12 @@ logLength_layout_2
 
 plot_grid(logLength_layout_1,logLength_layout_2,labels = "AUTO", label_size = 15,ncol = 1)
 #6*8 potrait
+###########
 
 
-
-###########################################################
-
-
-########### Figure_3.7 Relation_to_UCSC_CpG_Island pie chart ###########
-
-##################
-##      pos     ##
-##################
+######################################################################################################################
+# Distribution of the relation to CpG island :five sections: Island, N shore, S shore, N shelf, S shelf, and No Info 
+######################################################################################################################
 
 ## pie_M0.1_pos
 pie_dat_M0.1_pos <- M0.1_pos %>% count(Relation_to_UCSC_CpG_Island) %>% mutate(percentage = n / sum(n) * 100)
@@ -236,10 +236,6 @@ pie_dat_M1.1_pos[1,1]="No Info"
 pie_dat_M1.2_pos <- M1.2_pos %>% count(Relation_to_UCSC_CpG_Island) %>% mutate(percentage = n / sum(n) * 100)
 pie_dat_M1.2_pos[1,1]="No Info"
 
-##################
-##      neg     ##
-##################
-
 pie_dat_M0.1_neg <- M0.1_neg %>% count(Relation_to_UCSC_CpG_Island) %>% mutate(percentage = n / sum(n) * 100)
 pie_dat_M0.1_neg[1,1]="No Info"
 
@@ -254,8 +250,6 @@ pie_dat_M1.2_neg[1,1]="No Info"
 
 #########funtion########
 create_pie <- function(data_pie, title) {pie(data_pie$n, labels = paste0(data_pie$Relation_to_UCSC_CpG_Island," (",round(data_pie$percentage, 1), "%)"), col = c('#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f'), main = title,cex = 1,cex.main=1.5 )}
-
-
 
 par(mfrow = c(2, 2), mar = c(2, 2, 2, 2), oma = c(2, 2, 2, 2))
 #create_pie(pie_dat_M0.1_pos,"M0.1 pos")
@@ -282,11 +276,13 @@ mtext("ER-", outer = TRUE, cex = 1.4, font = 2)
 mtext("B", side = 3, adj = 0, outer = TRUE, line = -1.5, cex = 2, font = 1)
 #"pie_neg.pdf" 5*7 landscape
 #ggsave("pie_2_neg.pdf")
+############
 
 
 
-
-################## Figure_3.8 Methy mean plots ###########################
+######################################################################################################################
+# Distribution of methylation mean values for the baseline and mediation models
+######################################################################################################################
 
 hist_M0.1_pos_MethyMean=ggplot(M0.1_pos, aes(x = Methyl_mean)) +
   geom_histogram(aes(y = ..density..), bins = 30, fill = "#f781bf", color = "black", alpha = 0.7) +
@@ -334,13 +330,16 @@ MethyMean_layout_2
 
 plot_grid(MethyMean_layout_1,MethyMean_layout_2,labels = "AUTO",  label_size = 15,ncol = 1)
 #6*8 potrait ("hist_MethylMean.pdf")
-
-###########################################################
-
+###########
 
 
 
-################## Figure_3.9 GC_content plots ###########################
+
+######################################################################################################################
+# Distribution of the GC content
+######################################################################################################################
+#The figure shows the distribution of the GC content which is the percentage of C and G among the four nucleotide base pairs (A, T, C, and G) in the baseline and mediation models across the cancer subtypes.
+
 
 p_M0.1_pos=ggplot(M0.1_pos %>% select(Gene...GC.content), aes(x = Gene...GC.content)) +
   geom_histogram(aes(y = ..density..), binwidth = 2.5, fill = "#f781bf", color = "black", alpha = 0.7) +
@@ -387,11 +386,13 @@ layout_2
 plot_grid(layout_1,layout_2,labels = "AUTO", label_size = 15,ncol = 1)
 #6*8 potrait
 
-###########################################################
+#########
 
 
-####### average distance ############
-# Figure 3.4
+
+################### calculate average distance ############
+# Mean of the log10 (distance) between the nearby CpG island and the CpG in the methylation probe.
+
 M0.1_pos %>% select(diff_cpG_mapinfo) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_cpG_mapinfo > -2) %>% pull() %>% summary()
 M0.2_pos %>% select(diff_cpG_mapinfo) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_cpG_mapinfo > -2) %>% pull() %>% summary()
 M1.1_pos %>% select(diff_cpG_mapinfo) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_cpG_mapinfo > -2) %>% pull() %>% summary()
@@ -402,7 +403,7 @@ M0.2_neg %>% select(diff_cpG_mapinfo) %>% drop_na() %>% abs() %>% log10() %>% fi
 M1.1_neg %>% select(diff_cpG_mapinfo) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_cpG_mapinfo > -2) %>% pull() %>% summary()
 M1.2_neg %>% select(diff_cpG_mapinfo) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_cpG_mapinfo > -2) %>% pull() %>% summary()
 
-# Figure 3.5
+# Mean of the log 10 (distance) between the CpG in the methylation probe and the start position of a gene.
 M0.1_pos %>% select(diff_mapinfo_geneStart) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_mapinfo_geneStart > -2) %>% pull() %>% summary()
 M0.2_pos %>% select(diff_mapinfo_geneStart) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_mapinfo_geneStart > -2) %>% pull() %>% summary()
 M1.1_pos %>% select(diff_mapinfo_geneStart) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_mapinfo_geneStart > -2) %>% pull() %>% summary()
@@ -413,7 +414,7 @@ M0.2_neg %>% select(diff_mapinfo_geneStart) %>% drop_na() %>% abs() %>% log10() 
 M1.1_neg %>% select(diff_mapinfo_geneStart) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_mapinfo_geneStart > -2) %>% pull() %>% summary()
 M1.2_neg %>% select(diff_mapinfo_geneStart) %>% drop_na() %>% abs() %>% log10() %>% filter(diff_mapinfo_geneStart > -2) %>% pull() %>% summary()
 
-# Figure 3.6
+# Mean of the log 10 (length) between the start position and the end position of a gene.
 M0.1_pos %>% select(gene_length) %>% drop_na() %>% abs() %>% log10() %>% filter(gene_length > -2) %>% pull() %>% summary()
 M0.2_pos %>% select(gene_length) %>% drop_na() %>% abs() %>% log10() %>% filter(gene_length > -2) %>% pull() %>% summary()
 M1.1_pos %>% select(gene_length) %>% drop_na() %>% abs() %>% log10() %>% filter(gene_length > -2) %>% pull() %>% summary()
@@ -424,14 +425,15 @@ M0.2_neg %>% select(gene_length) %>% drop_na() %>% abs() %>% log10() %>% filter(
 M1.1_neg %>% select(gene_length) %>% drop_na() %>% abs() %>% log10() %>% filter(gene_length > -2) %>% pull() %>% summary()
 M1.2_neg %>% select(gene_length) %>% drop_na() %>% abs() %>% log10() %>% filter(gene_length > -2) %>% pull() %>% summary()
 
-# Figure 3.6
+# Average value of methylation mean values in the baseline and mediation models 
 #M0.1_pos %>% select(Methyl_mean) %>% summary()
+
 summary(M0.1_pos$Methyl_mean)
 summary(M0.2_pos$Methyl_mean)
 summary(M1.1_pos$Methyl_mean)
 summary(M1.2_pos$Methyl_mean)
 
-# Figure 3.9
+## GC content
 summary(M0.1_pos$Gene...GC.content)
 summary(M0.2_pos$Gene...GC.content)
 summary(M1.1_pos$Gene...GC.content)
